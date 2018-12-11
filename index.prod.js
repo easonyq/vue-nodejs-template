@@ -26,22 +26,24 @@ async function registerApp () {
   })
 
   try {
-    // 所有 navigate 请求重定向到 '/index.html'
-    // 配合后面的 static('vue-dist')，实际上是访问 '/vue-dist/index.html'
-    app.use(history({
-      htmlAcceptHeaders: ['text/html'],
-      index: '/index.html',
-      verbose: true
-    }))
-    app.use(static('vue-dist'))
-    app.use(static('public'))
-    await registerMiddlewares()
-    await registerRoutes()
-    app.use(router.routes())
-      .use(router.allowedMethods())
-      .listen(PORT)
+    // node 端中间件和路由
+    await registerMiddlewares();
+    await registerRoutes();
+    app.use(router.routes());
+    app.use(router.allowedMethods());
 
-    log.info('生产环境服务器启动于端口号', PORT)
+    // 前端(vue)路由
+    // 所有 navigate 请求重定向到 '/'，因为 webpack-dev-server 只服务这个路由
+    app.use(history({
+        htmlAcceptHeaders: ['text/html'],
+        index: '/index.html'
+    }));
+    app.use(koaStatic('vue-dist'));
+    app.use(koaStatic('public'));
+
+    app.listen(PORT);
+
+    log.info('生产环境服务器启动于端口号', PORT);
   } catch (e) {
     log.error(e)
     log.error('生产环境服务器启动失败\n\n')
