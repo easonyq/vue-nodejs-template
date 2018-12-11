@@ -28,21 +28,25 @@ async function registerApp () {
   })
 
   try {
-    // 所有 navigate 请求重定向到 '/'
-    // 因为 webpack-dev-server 只服务这个路由，否则就会漏到 node 端了。
-    app.use(history({
-      htmlAcceptHeaders: ['text/html'],
-      index: '/'
-    }))
-    app.use(static('public'))
-    await registerWebpack()
-    await registerMiddlewares()
-    await registerRoutes()
-    app.use(router.routes())
-      .use(router.allowedMethods())
-      .listen(PORT)
+    // node 端中间件和路由
+    await registerMiddlewares();
+    await registerRoutes();
+    app.use(router.routes());
+    app.use(router.allowedMethods());
 
-    log.info('开发环境服务器启动于端口号', PORT, '等待 webpack 编译中，请稍候。\n\n')
+    // 前端(vue)路由
+    // 所有 navigate 请求重定向到 '/'，因为 webpack-dev-server 只服务这个路由
+    app.use(history({
+        htmlAcceptHeaders: ['text/html'],
+        index: '/',
+        verbose: true
+    }));
+    app.use(koaStatic('public'));
+    await registerWebpack();
+
+    app.listen(PORT);
+
+    log.info('开发环境服务器启动于端口号', PORT, '等待 webpack 编译中，请稍候。\n\n');
   } catch (e) {
     log.error(e)
     log.error('开发环境服务器启动失败\n\n')
