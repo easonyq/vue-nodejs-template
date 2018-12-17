@@ -7,7 +7,7 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const glob = require('glob')
 const koaWebpack = require('koa-webpack')
-const static = require('koa-static')
+const koaStatic = require('koa-static')
 const history = require('koa2-history-api-fallback')
 
 const {PORT} = require('./config/server')
