@@ -33,7 +33,7 @@ async function registerApp () {
     app.use(router.allowedMethods());
 
     // 前端(vue)路由
-    // 所有 navigate 请求重定向到 '/'，因为 webpack-dev-server 只服务这个路由
+    // 所有 navigate 请求重定向到 '/index.html'，配合底下的 koaStatic，实际位置位于 vue-dist/index.html
     app.use(history({
         htmlAcceptHeaders: ['text/html'],
         index: '/index.html'
